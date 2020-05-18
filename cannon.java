@@ -12,16 +12,17 @@ public class cannon extends GameObject{
 	
 	public cannon(int courtWidth, int courtHeight) {
 		super(INIT_VX, INIT_VY, courtWidth/2,
-				courtHeight - (SIZE / 2), SIZE, SIZE,
+				courtHeight, SIZE, SIZE,
 			  courtWidth, courtHeight);
+		System.out.println(this.getPy());
 	}
 
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(Color.RED);
-		g.fillRect(this.getPx() -  SIZE /2 , this.getPy() - SIZE / 2, SIZE, SIZE);
+		g.fillRect(this.getPx() -  (this.SIZE / 2), this.getPy() - (this.SIZE / 2), this.SIZE, this.SIZE);
 		g.setColor((Color.BLUE));
-		g.fillRect(this.getPx(), this.getPy(), SIZE/2, SIZE /2);
+		g.fillRect(this.getPx(), this.getPy(), this.SIZE/2, this.SIZE /2);
 	}
 
 	@Override

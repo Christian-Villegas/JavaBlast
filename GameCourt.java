@@ -86,8 +86,6 @@ public class GameCourt extends JPanel {
 				BoulderCreator();
 			}
 		});
-
-		
 		
 		// used for keys
 		setFocusable(true);
@@ -230,21 +228,23 @@ public class GameCourt extends JPanel {
 					boulders.get(i).move();
 				}
 				//left border
- 					else if(boulders.get(i).getPx() <= 0 +(boulders.get(i).getWidth() / 2 )) {
+				else if(boulders.get(i).getPx() <= 0 +(boulders.get(i).getWidth() / 2 )) {
+					System.out.println("hit left border");
 					boulders.get(i).setVx(BOULDER_VX);
 					boulders.get(i).move();
 				}
  				//top border
-				if(boulders.get(i).getPy() <= 0 + boulders.get(i).getHeight()) {
+				 else if(boulders.get(i).getPy() <= 0 + (boulders.get(i).getHeight() / 2)) {
+					System.out.println("hit top border");
 					boulders.get(i).setVy(-BOULDER_VY);
 					boulders.get(i).move();
 				}
 				//bottom border
-				if(boulders.get(i).getPy() >= COURT_HEIGHT - (boulders.get(i).getWidth())) {
+				 else if(boulders.get(i).getPy() + (boulders.get(i).getHeight() / 2) >= COURT_HEIGHT) {
+					System.out.println("hit bottom border");
+					System.out.println("status of boulder: height = " + boulders.get(i).getHeight()
+							+ " y position = " + boulders.get(i).getPy());
 					boulders.get(i).setVy(BOULDER_VY);
-					System.out.println("the position of the boulder is " + boulders.get(i).getPy());
-					System.out.println("the courtheight is " + COURT_HEIGHT);
-					System.out.println("the width of the boulder is " + boulders.get(i).getWidth());
 					boulders.get(i).move();
 				}
 				
