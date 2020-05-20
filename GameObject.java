@@ -26,7 +26,8 @@ public abstract class GameObject {
 		        this.width  = width;
 		        this.height = height;
 		        this.maxX = courtWidth - width / 2;
-		        this.maxY = courtHeight - height;
+		        this.maxY = courtHeight - height / 2;
+		        //System.out.println("the py in gameObject = " + this.getPy());
 	}
 	 /*** GETTERS **********************************************************************************/
 	 	public int getPx() {
@@ -34,7 +35,7 @@ public abstract class GameObject {
 	    }
 
 	    public int getPy() {
-	        return this.py;
+			return this.py;
 	    }
 	    
 	    public int getVx() {

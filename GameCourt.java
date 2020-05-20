@@ -15,7 +15,7 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class GameCourt extends JPanel {
 	
-	private cannon Cannon;
+	private cannon Cannon = new cannon(COURT_WIDTH, COURT_HEIGHT);
 	private ArrayList<bullet> bullets;
 	private ArrayList<boulder> boulders;
 	
@@ -57,7 +57,7 @@ public class GameCourt extends JPanel {
             	if(playing) {
             		// checks if i won or lost
             		GO();
-            	}
+				}
             }
         });
 		
@@ -99,13 +99,13 @@ public class GameCourt extends JPanel {
 	                Cannon.setVx(-CANNON_VX);
 	            } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 	                Cannon.setVx(CANNON_VX);
-	            } 
+	            }
 			}
 
 			// if i stop pressing the key, it will put the velocity back to 0
 	        public void keyReleased(KeyEvent e) {
 	            Cannon.setVx(0);
-	         }
+			}
 		});
 		
 		
@@ -165,7 +165,7 @@ public class GameCourt extends JPanel {
 		            	bullet shot = new bullet(COURT_WIDTH, COURT_HEIGHT);
 		            	// the position is set to the middle of the cannon
 		            	shot.setPx(Cannon.getPx());
-		            	shot.setPy(Cannon.getPy());
+						shot.setPy(Cannon.getPy());
 		            	// added to the arraylist of bullets
 		            	bullets.add(shot);
 					}
@@ -213,8 +213,6 @@ public class GameCourt extends JPanel {
 			boulder boulder = new boulder(COURT_WIDTH, COURT_HEIGHT);
 			boulder.setVx(BOULDER_VX);
 			boulder.setVy(BOULDER_VY);
-			//testing purposes
-			System.out.println("the bolder health is: " + boulder.getHealth());
 			boulders.add(boulder);
 		}
 	}
@@ -229,21 +227,16 @@ public class GameCourt extends JPanel {
 				}
 				//left border
 				else if(boulders.get(i).getPx() <= 0 +(boulders.get(i).getWidth() / 2 )) {
-					System.out.println("hit left border");
 					boulders.get(i).setVx(BOULDER_VX);
 					boulders.get(i).move();
 				}
  				//top border
 				 else if(boulders.get(i).getPy() <= 0 + (boulders.get(i).getHeight() / 2)) {
-					System.out.println("hit top border");
 					boulders.get(i).setVy(-BOULDER_VY);
 					boulders.get(i).move();
 				}
 				//bottom border
 				 else if(boulders.get(i).getPy() + (boulders.get(i).getHeight() / 2) >= COURT_HEIGHT) {
-					System.out.println("hit bottom border");
-					System.out.println("status of boulder: height = " + boulders.get(i).getHeight()
-							+ " y position = " + boulders.get(i).getPy());
 					boulders.get(i).setVy(BOULDER_VY);
 					boulders.get(i).move();
 				}
