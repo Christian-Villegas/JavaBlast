@@ -108,10 +108,10 @@ public abstract class GameObject {
      */
    
     public boolean intersects(GameObject that) {
-        return (this.px + (this.width/2) - 2 >= (that.px - that.width/2) + 2
+        return (this.px + (this.width/2) - 5 >= (that.px - that.width/2)
             && this.py + (this.height/2) >= (that.py - that.height/2)
-            && that.px + (that.width/2) - 2 >= (this.px - this.width/2)
-            && that.py + (that.height/2) - 2 >= (this.py - this.height/2));
+            && that.px + (that.width/2) - 5 >= (this.px - this.width/2)
+            && that.py + (that.height/2) - 5 >= (this.py - this.height/2));
     }
 
 
