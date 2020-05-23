@@ -2,6 +2,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 import javax.swing.*; 
 
+@SuppressWarnings("unused")
 public class boulder extends GameObject {
 
 	//each boulder is given an initial random health between 1 and 100
@@ -9,7 +10,6 @@ public class boulder extends GameObject {
 
 	//both height and width will be determined by the health of the boulder
 	private int height;
-
 	private int width;
 
 	//x and y are the coordinates of the boulder on the panel
@@ -28,9 +28,8 @@ public class boulder extends GameObject {
   
   	//super the constructor
 
-		super(INIT_VX, INIT_VY, INIT_POSX,
-				  INIT_POSY, HEIGHT, WIDTH,
-				  courtWidth, courtHeight);
+		super(INIT_VX, INIT_VY, INIT_POSX, INIT_POSY, 
+				HEIGHT, WIDTH, courtWidth, courtHeight);
 
 		int newHealth = (int)(Math.random() * 100);
 		this.setHealth(newHealth);
@@ -71,22 +70,22 @@ public class boulder extends GameObject {
 	@Override
 	public void draw(Graphics g) {
 		if(this.health >= 75) {
-			g.setColor(Color.RED);
-			g.fillOval(this.getPx() - this.width / 2, this.getPy() - this.height / 2, this.width, this.height);
 			g.setColor(Color.BLUE);
-			g.fillOval(this.getPx() , this.getPy() , this.width / 3, this.height / 3);
+			g.fillRect(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
+			g.setColor(Color.RED);
+			g.fillOval(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
 		}
 		else if (this.health >= 50) {
-			g.setColor(Color.GREEN);
-			g.fillOval(this.getPx() - this.width / 2, this.getPy() - this.height / 2, this.width, this.height);
 			g.setColor(Color.BLUE);
-			g.fillOval(this.getPx(), this.getPy(), this.width / 3, this.height / 3);
+			g.fillRect(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
+			g.setColor(Color.GREEN);
+			g.fillOval(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
 		}
 		else {
-			g.setColor(Color.BLUE);
-			g.fillOval(this.getPx() - this.width / 2, this.getPy() - this.height / 2, this.width, this.height);
 			g.setColor(Color.RED);
-			g.fillOval(this.getPx(), this.getPy(), this.width / 3, this.height / 3);
+			g.fillRect(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
+			g.setColor(Color.BLUE);
+			g.fillOval(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
 		}
 	}
 }

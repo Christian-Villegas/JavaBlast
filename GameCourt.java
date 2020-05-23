@@ -1,10 +1,7 @@
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -15,7 +12,7 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class GameCourt extends JPanel {
 	
-	private cannon Cannon = new cannon(COURT_WIDTH, COURT_HEIGHT);
+	private cannon Cannon;
 	private ArrayList<bullet> bullets;
 	private ArrayList<boulder> boulders;
 	
@@ -57,28 +54,19 @@ public class GameCourt extends JPanel {
             	if(playing) {
             		// checks if i won or lost
             		GO();
-				}
+            		bulletInteractions();
+            	}
             }
         });
 		
 		Timer cannonMover = new Timer(INTERVAL, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// checks if the cannon has changed its velocity which indirectly 
+				// checks if the cannon has changed its velocity which indirectly
 				// changes its position
 				CannonMovement();
 			}
 		});
-		
-		Timer shooter = new Timer(100, new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// checks if bullets are made
-				ShooterCheck();
-				// it will either move or delete a bullet based on its position
-				BulletMovement();
-				// it will move the boulders across the court until the health is gone
-				BoulderMovement();
-			}
-		});
+
 		
 		Timer boulderMaker = new Timer(5000, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -86,6 +74,18 @@ public class GameCourt extends JPanel {
 				BoulderCreator();
 			}
 		});
+		
+		Timer Movement = new Timer(100, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				// it will either move or delete a bullet based on its position
+				BulletMovement();
+				// it will move the boulders across the court until the health is gone
+				BoulderMovement();
+			}
+		});
+
+		
 		
 		// used for keys
 		setFocusable(true);
@@ -99,21 +99,37 @@ public class GameCourt extends JPanel {
 	                Cannon.setVx(-CANNON_VX);
 	            } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 	                Cannon.setVx(CANNON_VX);
-	            }
+	            } 
 			}
 
 			// if i stop pressing the key, it will put the velocity back to 0
 	        public void keyReleased(KeyEvent e) {
 	            Cannon.setVx(0);
+	         }
+		});
+
+		addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+					// if pressed, a new bullet is created
+					bullet shot = new bullet(COURT_WIDTH, COURT_HEIGHT);
+					// the position is set to the middle of the cannon
+					shot.setPx(Cannon.getPx());
+					shot.setPy(Cannon.getPy());
+					// added to the arraylist of bullets
+					bullets.add(shot);
+					System.out.println("woah");
+				}
 			}
 		});
-		
-		
+
+
 		// starts all the timers when the game starts
 		check.start();
 		cannonMover.start();
-		shooter.start();
+		//shooter.start();
 		boulderMaker.start();
+		Movement.start();
 		
 		this.status = status;
 		this.scoreboard = scoreboard;
@@ -142,7 +158,27 @@ public class GameCourt extends JPanel {
 		if(playing) {
 			for(int i = 0; i < boulders.size(); i++) {
 				// the intersects method needs work
+				//System.out.println(Cannon.intersects(boulders.get(i)));
 				if(Cannon.intersects(boulders.get(i))) {
+					System.out.println("PX:");
+
+					System.out.println("BOULDER:");
+					System.out.println("LEFT: " + (boulders.get(i).getPx() - boulders.get(i).getWidth()/2) + " RIGHT: "
+							+ (boulders.get(i).getPx() + boulders.get(i).getWidth()/2));
+
+					System.out.println("Cannon:");
+					System.out.println("LEFT: " + (Cannon.getPx() - Cannon.getWidth()/2) + " RIGHT: "
+							+ (Cannon.getPx() + Cannon.getWidth()/2));
+
+					System.out.println("PY");
+					System.out.println("BOULDER:");
+					System.out.println("TOP: " + (boulders.get(i).getPy() - boulders.get(i).getHeight()/2) + " BOTTOM: "
+							+ (boulders.get(i).getPy() + boulders.get(i).getHeight()/2));
+
+					System.out.println("Cannon:");
+					System.out.println("TOP: " + (Cannon.getPy() - Cannon.getHeight()/2) + " BOTTOM: "
+							+ (Cannon.getPy() + Cannon.getHeight()/2));
+
 					// if it intersects, then the game is over and a text will appear
 					playing = false;
 					status.setText("You lose.");
@@ -154,25 +190,7 @@ public class GameCourt extends JPanel {
 	
 //************************************************************************************//
 	
-	// if playing, checks to see if the space bar is clicked
-	// creates bullets
-	public void ShooterCheck() {
-		if(playing){ 
-			addKeyListener(new KeyAdapter() {
-				public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_SPACE) { 
-						// if pressed, a new bullet is created
-		            	bullet shot = new bullet(COURT_WIDTH, COURT_HEIGHT);
-		            	// the position is set to the middle of the cannon
-		            	shot.setPx(Cannon.getPx());
-						shot.setPy(Cannon.getPy());
-		            	// added to the arraylist of bullets
-		            	bullets.add(shot);
-					}
-				}
-			});
-		 }
-	}
+
 	
 	// if playing, then the cannon's position will be updated according to what i pressed
 	public void CannonMovement() {
@@ -213,6 +231,10 @@ public class GameCourt extends JPanel {
 			boulder boulder = new boulder(COURT_WIDTH, COURT_HEIGHT);
 			boulder.setVx(BOULDER_VX);
 			boulder.setVy(BOULDER_VY);
+			
+			//testing purposes
+			System.out.println("the boulder health is: " + boulder.getHealth());
+			
 			boulders.add(boulder);
 		}
 	}
@@ -226,17 +248,17 @@ public class GameCourt extends JPanel {
 					boulders.get(i).move();
 				}
 				//left border
-				else if(boulders.get(i).getPx() <= 0 +(boulders.get(i).getWidth() / 2 )) {
+				else if(boulders.get(i).getPx() <= 0 + (boulders.get(i).getWidth() / 2 )) {
 					boulders.get(i).setVx(BOULDER_VX);
 					boulders.get(i).move();
 				}
  				//top border
-				 else if(boulders.get(i).getPy() <= 0 + (boulders.get(i).getHeight() / 2)) {
+				else if(boulders.get(i).getPy() <= 0 + (boulders.get(i).getHeight() / 2)) {
 					boulders.get(i).setVy(-BOULDER_VY);
 					boulders.get(i).move();
 				}
 				//bottom border
-				 else if(boulders.get(i).getPy() + (boulders.get(i).getHeight() / 2) >= COURT_HEIGHT) {
+				else if(boulders.get(i).getPy() + (boulders.get(i).getHeight() / 2) + 30 >= COURT_HEIGHT) {
 					boulders.get(i).setVy(BOULDER_VY);
 					boulders.get(i).move();
 				}
@@ -251,8 +273,23 @@ public class GameCourt extends JPanel {
 			}	
 		}	
 	}
-	
-	
+
+	public void bulletInteractions() {
+		if(playing){
+			for(int i = 0; i < bullets.size(); i++){
+				for(int j = 0; j < boulders.size(); j++){
+					bullet bullet = bullets.get(i);
+					boulder boulder = boulders.get(j);
+					if(bullets.contains(bullet)){
+						if(bullet.intersects(boulder)){
+							bullets.remove(bullet);
+							boulder.setHealth(boulder.getHealth() - 5);
+						}
+					}
+				}
+			}
+		}
+	}
 //************************************************************************************//
 	
 	// paints the objects in the game

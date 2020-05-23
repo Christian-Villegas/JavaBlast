@@ -2,11 +2,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.*;
 
+@SuppressWarnings("unused")
 public class bullet extends GameObject{
 	
 	public static final int SIZE = 10;
-	public static final int INIT_POSX = 130;
-	public static final int INIT_POSY = 20;
+	public static final int INIT_POSX = 0;
+	public static final int INIT_POSY = 0;
 	public static final int INIT_VX = 0;
 	public static final int INIT_VY = -15;
 	
@@ -21,8 +22,5 @@ public class bullet extends GameObject{
 		g.fillOval(this.getPx() - SIZE / 2 , this.getPy() - SIZE / 2, 10, 10);
 	}
 
-	@Override
-	public void setHealth(int i) {
-	}
 
 }

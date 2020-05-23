@@ -59,6 +59,7 @@ public class Game implements Runnable{
 	}
 	
 	public static void main(String[] args) {
+		// game 
 		SwingUtilities.invokeLater(new Game());
 	}
 }
