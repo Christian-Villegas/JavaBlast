@@ -18,8 +18,8 @@ public class boulder extends GameObject {
 	public static final int INIT_POSY = 200; 
 	public static final int INIT_VX = 0; 
 	public static final int INIT_VY = 0;
-	public static int HEIGHT = 20;
-	public static int WIDTH = 20;
+	public static double HEIGHT = (Math.sqrt(2)/2);
+	public static double WIDTH = (Math.sqrt(2)/2);
 	
 	
 	
@@ -27,31 +27,12 @@ public class boulder extends GameObject {
 	public boulder(int courtWidth, int courtHeight) {
   
   	//super the constructor
-
 		super(INIT_VX, INIT_VY, INIT_POSX, INIT_POSY, 
-				HEIGHT, WIDTH, courtWidth, courtHeight);
+				(int)(20 * HEIGHT), (int) (20 * WIDTH),
+				courtWidth, courtHeight);
 
 		int newHealth = (int)(Math.random() * 100);
 		this.setHealth(newHealth);
-
-//		if(this.getHealth() >= 75) {
-//			this.setHeight(100);
-//			this.setWidth(100);
-//			this.width = 100;
-//			this.height = 100;
-//		}
-//		else if(this.getHealth() >= 50) {
-//			this.setHeight(75);
-//			this.setWidth(75);
-//			this.width = 75;
-//			this.height = 75;
-//		}
-//		else {
-//			this.setHeight(60);
-//			this.setWidth(60);
-//			this.width = 60;
-//			this.height = 60;
-//		}
 	}
 
 
@@ -66,38 +47,39 @@ public class boulder extends GameObject {
 	}
 
 
-
 	@Override
 	public void draw(Graphics g) {
 		if(this.health >= 75) {
-			this.setHeight(100);
-			this.setWidth(100);
-			this.width = 100;
-			this.height = 100;
+			this.width = ((int)(100 * WIDTH));
+			this.height = ((int)(100 * HEIGHT));
+			this.setWidth((int)(100 * WIDTH));
+			this.setHeight((int)(100 * WIDTH));
+			g.setColor(Color.RED);
+			g.fillOval(this.getPx() - 50, this.getPy() - 50, 100, 100);
 			g.setColor(Color.BLUE);
 			g.fillRect(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
-			g.setColor(Color.RED);
-			g.fillOval(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
 		}
 		else if (this.health >= 50) {
-			this.setHeight(75);
-			this.setWidth(75);
-			this.width = 75;
-			this.height = 75;
+			this.width = ((int)(75 * WIDTH));
+			this.height = ((int)(75 * HEIGHT));
+			this.setWidth((int)(75 * WIDTH));
+			this.setHeight((int)(75 * WIDTH));
+			g.setColor(Color.GREEN);
+			g.fillOval(this.getPx() - 37, this.getPy() - 37, 75, 75);
 			g.setColor(Color.BLUE);
 			g.fillRect(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
-			g.setColor(Color.GREEN);
-			g.fillOval(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
+
 		}
 		else if (this.health >= 1) {
-			this.setHeight(60);
-			this.setWidth(60);
-			this.width = 60;
-			this.height = 60;
+			this.width = ((int)(60 * WIDTH));
+			this.height = ((int)(60 * WIDTH));
+			this.setWidth((int)(60 * WIDTH));
+			this.setHeight((int)(60 * WIDTH));
+			g.setColor(Color.BLUE);
+			g.fillOval(this.getPx() - 30, this.getPy() - 30, 60, 60);
 			g.setColor(Color.RED);
 			g.fillRect(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
-			g.setColor(Color.BLUE);
-			g.fillOval(this.getPx() - this.width/2, this.getPy() - this.height/2, this.width, this.height);
+
 		}
 	}
 }

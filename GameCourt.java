@@ -278,17 +278,14 @@ public class GameCourt extends JPanel {
 		if (playing) {
 			for (int i = 0; i < bullets.size(); i++) {
 				for (int j = 0; j < boulders.size(); j++) {
-					if (bullets.size() > 0) {
-						System.out.println(bullets.size());
+					if (bullets.size() > 0 && bullets.contains(bullets.get(i)) && (bullets.get(i) != null)) {
 						bullet bullet = bullets.get(i);
 						boulder boulder = boulders.get(j);
-						if (bullets.contains(bullet)) {
-							if (bullet.intersects(boulder)) {
-								bullets.remove(bullet);
-								boulder.setHealth(boulder.getHealth() - 5);
-								if(boulder.getHealth() <= 0){
-									boulders.remove(boulder);
-								}
+						if (bullet.intersects(boulder)) {
+							bullets.remove(bullet);
+							boulder.setHealth(boulder.getHealth() - 5);
+							if(boulder.getHealth() <= 0){
+								boulders.remove(boulder);
 							}
 						}
 					}
