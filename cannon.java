@@ -24,8 +24,6 @@ public class cannon extends GameObject{
 		g.fillRect(this.getPx(), this.getPy(), SIZE/2, SIZE /2);
 	}
 
-//	public int getSize(){ 
-//		return this.SIZE;
-//	}
+
 
 }

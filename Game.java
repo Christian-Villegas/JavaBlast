@@ -11,13 +11,13 @@ public class Game implements Runnable{
 	public void run() {
 		
 		// where the game is gonna be on computer screen (top left)
-		final JFrame frame = new JFrame("JavaBlast");
+		final JFrame frame = new JFrame("JAVABLAST");
 		frame.setLocation(300, 300);
 		
 		// the panel and label for keeping score
 		final JPanel score_panel = new JPanel();
 		frame.add(score_panel, BorderLayout.NORTH);
-		final JLabel score = new JLabel("0");
+		final JLabel score = new JLabel("SCORE");
 		score_panel.add(score);
 		
 		// panel and label for status

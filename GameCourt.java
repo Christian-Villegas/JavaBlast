@@ -55,6 +55,7 @@ public class GameCourt extends JPanel {
             		// checks if i won or lost
             		GO();
             		bulletInteractions();
+            		boulderBreak();
             	}
             }
         });
@@ -124,6 +125,8 @@ public class GameCourt extends JPanel {
 		});
 
 
+
+
 		// starts all the timers when the game starts
 		check.start();
 		cannonMover.start();
@@ -147,6 +150,11 @@ public class GameCourt extends JPanel {
 		status.setText("Good Luck");
 		requestFocusInWindow();
 	}
+
+	public int getScore() {
+		return this.score;
+	}
+
 	
 	
 //************************************************************************************//
@@ -231,10 +239,8 @@ public class GameCourt extends JPanel {
 			boulder boulder = new boulder(COURT_WIDTH, COURT_HEIGHT);
 			boulder.setVx(BOULDER_VX);
 			boulder.setVy(BOULDER_VY);
-			
 			//testing purposes
 			System.out.println("the boulder health is: " + boulder.getHealth());
-			
 			boulders.add(boulder);
 		}
 	}
@@ -274,18 +280,44 @@ public class GameCourt extends JPanel {
 		}	
 	}
 
+	public void boulderBreak(){
+		if(playing && boulders.size() > 0){
+			for(int i = 0; i < boulders.size(); i++) {
+				if (boulders.get(i).getBoulderBroke()) {
+					boulders.get(i).setBoulderBroke(false);
+					System.out.println("a boulder broke");
+					boulder brokenPiece = new boulder(COURT_WIDTH, COURT_HEIGHT);
+					brokenPiece.setVx(-boulders.get(i).getVx());
+					if(boulders.get(i).getVy() > 0) {
+						brokenPiece.setVy(boulders.get(i).getVy());
+					}
+					else{
+						brokenPiece.setVy(-boulders.get(i).getVy());
+						boulders.get(i).setVy(-boulders.get(i).getVy());
+					}
+					brokenPiece.setHealth(boulders.get(i).getHealth());
+					brokenPiece.setPx(boulders.get(i).getPx());
+					brokenPiece.setPy(boulders.get(i).getPy());
+					boulders.add(brokenPiece);
+				}
+			}
+		}
+	}
+
 	public void bulletInteractions() {
 		if (playing) {
 			for (int i = 0; i < bullets.size(); i++) {
 				for (int j = 0; j < boulders.size(); j++) {
-					if (bullets.size() > 0 && bullets.contains(bullets.get(i)) && (bullets.get(i) != null)) {
+					if (i < bullets.size() && bullets.contains(bullets.get(i)) && (bullets.get(i) != null)) {
 						bullet bullet = bullets.get(i);
 						boulder boulder = boulders.get(j);
 						if (bullet.intersects(boulder)) {
 							bullets.remove(bullet);
 							boulder.setHealth(boulder.getHealth() - 5);
+							score += 5;
 							if(boulder.getHealth() <= 0){
 								boulders.remove(boulder);
+								score += 10;
 							}
 						}
 					}
