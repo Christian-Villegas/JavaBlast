@@ -15,7 +15,8 @@ public class GameCourt extends JPanel {
 	private cannon Cannon;
 	private ArrayList<bullet> bullets;
 	private ArrayList<boulder> boulders;
-	
+
+
 	// state of the game
 	public boolean playing = false;
 	
@@ -46,7 +47,15 @@ public class GameCourt extends JPanel {
 	// constructor for GameCourt
 	public GameCourt(JLabel status, JLabel scoreboard) {
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		
+
+		Timer boulderMaker = new Timer(5000, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// creates the boulder and sets the velocities
+				BoulderCreator();
+			}
+		});
+
+
 		// this is constanly going to check if the game is still going on
 		Timer check = new Timer(INTERVAL, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -56,7 +65,8 @@ public class GameCourt extends JPanel {
             		GO();
             		bulletInteractions();
             		boulderBreak();
-            	}
+					boulderRestart(boulderMaker);
+				}
             }
         });
 		
@@ -69,13 +79,7 @@ public class GameCourt extends JPanel {
 		});
 
 		
-		Timer boulderMaker = new Timer(5000, new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// creates the boulder and sets the velocities
-				BoulderCreator();
-			}
-		});
-		
+
 		Timer Movement = new Timer(100, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -86,7 +90,13 @@ public class GameCourt extends JPanel {
 			}
 		});
 
-		
+
+		Timer breakTime = new Timer(20000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boulderMaker.stop();
+				}
+			});
 		
 		// used for keys
 		setFocusable(true);
@@ -103,7 +113,7 @@ public class GameCourt extends JPanel {
 	            } 
 			}
 
-			// if i stop pressing the key, it will put the velocity back to 0
+			// if I stop pressing the key, it will put the velocity back to 0
 	        public void keyReleased(KeyEvent e) {
 	            Cannon.setVx(0);
 	         }
@@ -119,24 +129,23 @@ public class GameCourt extends JPanel {
 					shot.setPy(Cannon.getPy());
 					// added to the arraylist of bullets
 					bullets.add(shot);
-					System.out.println("woah");
 				}
 			}
 		});
 
 
 
-
 		// starts all the timers when the game starts
 		check.start();
 		cannonMover.start();
-		//shooter.start();
 		boulderMaker.start();
 		Movement.start();
+		breakTime.start();
 		
 		this.status = status;
 		this.scoreboard = scoreboard;
 		this.score = 0;
+
 	}
 	
 	// resets the game to its initial state
@@ -168,25 +177,6 @@ public class GameCourt extends JPanel {
 				// the intersects method needs work
 				//System.out.println(Cannon.intersects(boulders.get(i)));
 				if(Cannon.intersects(boulders.get(i))) {
-					System.out.println("PX:");
-
-					System.out.println("BOULDER:");
-					System.out.println("LEFT: " + (boulders.get(i).getPx() - boulders.get(i).getWidth()/2) + " RIGHT: "
-							+ (boulders.get(i).getPx() + boulders.get(i).getWidth()/2));
-
-					System.out.println("Cannon:");
-					System.out.println("LEFT: " + (Cannon.getPx() - Cannon.getWidth()/2) + " RIGHT: "
-							+ (Cannon.getPx() + Cannon.getWidth()/2));
-
-					System.out.println("PY");
-					System.out.println("BOULDER:");
-					System.out.println("TOP: " + (boulders.get(i).getPy() - boulders.get(i).getHeight()/2) + " BOTTOM: "
-							+ (boulders.get(i).getPy() + boulders.get(i).getHeight()/2));
-
-					System.out.println("Cannon:");
-					System.out.println("TOP: " + (Cannon.getPy() - Cannon.getHeight()/2) + " BOTTOM: "
-							+ (Cannon.getPy() + Cannon.getHeight()/2));
-
 					// if it intersects, then the game is over and a text will appear
 					playing = false;
 					status.setText("You lose.");
@@ -315,14 +305,22 @@ public class GameCourt extends JPanel {
 							bullets.remove(bullet);
 							boulder.setHealth(boulder.getHealth() - 5);
 							score += 5;
+							scoreboard.setText(score+"");
 							if(boulder.getHealth() <= 0){
 								boulders.remove(boulder);
 								score += 10;
+								scoreboard.setText(score+"");
 							}
 						}
 					}
 				}
 			}
+		}
+	}
+
+	public void boulderRestart(Timer boulderMaker){
+		if(boulders.size() == 0){
+			boulderMaker.start();
 		}
 	}
 
