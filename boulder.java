@@ -46,6 +46,7 @@ public class boulder extends GameObject {
 		else{
 			this.healthLevel = 1;
 		}
+
 		this.boulderBroke = false;
 	}
 
@@ -68,6 +69,13 @@ public class boulder extends GameObject {
 		this.boulderBroke = bool;
 	}
 
+
+	@Override
+	public void move() {
+		this.setPx(this.getPx() + this.getVx());
+		this.setPy(this.getPy() + this.getVy());
+		this.setVy(this.getVy() + 1);
+	}
 
 	@Override
 	public void draw(Graphics g) {

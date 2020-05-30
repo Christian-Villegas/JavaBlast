@@ -19,6 +19,12 @@ public class Game implements Runnable{
 		frame.add(score_panel, BorderLayout.NORTH);
 		final JLabel score = new JLabel("SCORE");
 		score_panel.add(score);
+
+		// the panel and label for keeping score
+		final JPanel levelPanel = new JPanel();
+		frame.add(levelPanel, BorderLayout.NORTH);
+		final JLabel level = new JLabel("Level");
+		levelPanel.add(level);
 		
 		// panel and label for status
 		final JPanel status_panel = new JPanel();
@@ -27,7 +33,7 @@ public class Game implements Runnable{
 		status_panel.add(status);
 		
 		// main playing area (GameCourt)
-		final GameCourt court = new GameCourt(status, score);
+		final GameCourt court = new GameCourt(status, score, level);
 		frame.add(court, BorderLayout.CENTER);
 		
 		// main panel
@@ -52,6 +58,7 @@ public class Game implements Runnable{
 		
 		// needed to show all the panels/buttons at the top
 		control_panel.add(score_panel);
+		control_panel.add(levelPanel);
 		control_panel.add(startover);
 		
 		// starts the game
