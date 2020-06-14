@@ -9,6 +9,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import java.io.*;
+import java.util.*;
+
 @SuppressWarnings("serial")
 public class GameCourt extends JPanel {
 	
@@ -16,10 +19,15 @@ public class GameCourt extends JPanel {
 	private ArrayList<bullet> bullets;
 	private ArrayList<boulder> boulders;
 
+	File file = new File("HighScores.txt");
+
+	private ArrayList<Integer> highscores = new ArrayList<>();
+
 
 	// state of the game
-	public boolean playing = true;
+	public boolean playing = false;
 	public boolean levelCompleted = false;
+	private boolean newGame;
 	
 	// parameters for GameCourt
 	// these two variables are updated every millisecond
@@ -46,6 +54,7 @@ public class GameCourt extends JPanel {
 	@SuppressWarnings("unused")
 	private int score;
 	private int level;
+	private int gameLength;
 	
 	// constructor for GameCourt
 	public GameCourt(JLabel status, JLabel scoreboard, JLabel stageNumber) {
@@ -76,6 +85,8 @@ public class GameCourt extends JPanel {
             }
         });
 
+
+
 		/**
 		 * updates the bullet and boulder positions every 100th of a second
 		 */
@@ -93,7 +104,9 @@ public class GameCourt extends JPanel {
 		Timer boulderHalt = new Timer((20000)* Math.max((int)(.5 * getLevel()), 1), new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("boulderMaker stopped");
 				boulderMaker.stop();
+				levelCompleted = true;
 				}
 			});
 
@@ -104,16 +117,38 @@ public class GameCourt extends JPanel {
 		Timer newLevelCheck = new Timer(10, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("the level is completed : "+ getLevelCompleted());
-				if(getLevelCompleted()) {
+				gameLength += 10;
+				if(getLevelCompleted() && boulders.isEmpty() && !boulderMaker.isRunning()) {
+					System.out.println("level completed: " + getLevelCompleted());
 					levelIncrement();
-					System.out.println("level has increased: " + getLevel());
-				}
-				if(!boulderMaker.isRunning()) {
+					System.out.println("level completed: " + getLevelCompleted());
 					boulderRestart(boulderMaker);
 				}
 			}
 		});
+
+		/**
+		 * starts and stops timers related to level counting depending on whether or not the player is playing.
+		 */
+		Timer startStopper = new Timer(INTERVAL, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!boulderMaker.isRunning() && getLevel() == 1 && getPlaying() && boulders.isEmpty() && gameLength == 0){
+					System.out.println("boulderMaker restarted at beginning of level 1");
+					boulderMaker.start();
+				}
+				if(getPlaying()){
+					boulderHalt.start();
+					newLevelCheck.start();
+					//System.out.println(newLevelCheck.isRunning());
+				}else{
+					boulderHalt.stop();
+					newLevelCheck.stop();
+					boulderMaker.stop();
+				}
+			}
+		});
+
 		
 		// used for keys
 		setFocusable(true);
@@ -158,8 +193,8 @@ public class GameCourt extends JPanel {
 		 check.start();
 		 boulderMaker.start();
 		 Movement.start();
-		 boulderHalt.start();
-		 newLevelCheck.start();
+		 startStopper.start();
+
 
 		/**
 		 * initializations
@@ -170,23 +205,43 @@ public class GameCourt extends JPanel {
 		this.score = 0;
 		this.level = 1;
 		this.levelCompleted = false;
+		this.newGame = true;
 	}
 
 	/**
 	 * resets the game to its initial state
 	 */
 	public void reset() {
-		System.out.println("should restart");
-//-------------------------------------------INIT VARIABLES------------------------------------------//
-		playing = true;
-		score = 0;
-		level = 1;
-		levelCompleted = false;
-//-------------------------------------------GAME OBJECTS--------------------------------------------//
+		if(file.exists() && this.newGame) {
+			try {
+				@SuppressWarnings("resource")
+				Scanner scan = new Scanner(new FileInputStream(file));
+
+				scan.nextLine();
+
+				while (scan.hasNextLine()) {
+					String[] lines = scan.nextLine().split(":");
+
+					highscores.add(Integer.parseInt(lines[1].trim()));
+				}
+			} catch (FileNotFoundException fnf) {
+				fnf.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Program ending.");
+			}
+		}
+		//-------------------------------------------INIT VARIABLES------------------------------------------//
+		this.playing = true;
+		this.score = 0;
+		this.level = 1;
+		this.gameLength = 0;
+		this.levelCompleted = false;
+		//-------------------------------------------GAME OBJECTS--------------------------------------------//
 		bullets = new ArrayList<>();
 		boulders = new ArrayList<>();
 		Cannon = new cannon(COURT_WIDTH, COURT_HEIGHT);
-//-------------------------------------------J-LABELS-----------------------------------------------//
+		//-------------------------------------------J-LABELS-----------------------------------------------//
 		scoreboard.setText("0");
 		stageNumber.setText("Level: " + level);
 		status.setText("Good Luck");
@@ -203,18 +258,49 @@ public class GameCourt extends JPanel {
 	 * and the game is over.
 	 */
 	public void GO() {
-		if(playing) {
 			for(int i = 0; i < boulders.size(); i++) {
 				// the intersects method needs work
-				//System.out.println(Cannon.intersects(boulders.get(i)));
 				if(Cannon.intersects(boulders.get(i))) {
 					// if it intersects, then the game is over and a text will appear
 					this.playing = false;
+					this.newGame = false;
 					status.setText("You lose.");
+
+					// writing the highscores into a file
+					highscores.add(score);
+					Collections.sort(highscores);
+
+
+					try{
+						// creates a file called HighScores.txt
+						FileWriter fileWriter = new FileWriter("HighScores.txt");
+						// needed to write in the file "filewriter"
+						BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+
+						bufferedWriter.write("-----HIGHSCORES-----");
+						bufferedWriter.newLine();
+						for(int j = 0; j < highscores.size(); j++) {
+							// its going to add whatever you write
+							String text = (j+1) + ": " + highscores.get(highscores.size()-(j+1));
+
+							// adds this text
+							bufferedWriter.write(text);
+							bufferedWriter.newLine();
+						}
+
+						//Always close writer
+						bufferedWriter.close();
+
+					} catch (IOException exk) {
+						System.out.println( "Error writing file '" + "HighScores.txt" + "'");
+						exk.printStackTrace();
+					}
+					break;
 				}
 			}
 		}
-	}
+
 	
 	
 //************************************************************************************//
@@ -287,7 +373,9 @@ public class GameCourt extends JPanel {
 					boulders.get(i).move();
 				}
 				//bottom border
-				else if(boulders.get(i).getPy() + (boulders.get(i).getHeight() / 2) + 30 >= COURT_HEIGHT) {
+				else if(boulders.get(i).getPy() + (boulders.get(i).getHeight() / 2) + boulders.get(i).getExtraBit() >= COURT_HEIGHT ) {
+//					System.out.println(boulders.get(i).getExtraBit());
+//					System.out.println(boulders.get(i).getPy() + (boulders.get(i).getHeight() / 2) + boulders.get(i).getExtraBit() + 10);
 					boulders.get(i).setVy(BOULDER_VY);
 					boulders.get(i).move();
 				}
@@ -360,8 +448,8 @@ public class GameCourt extends JPanel {
 	 * @param boulderMaker -- the boulderMaker timer
 	 */
 	public void boulderRestart(Timer boulderMaker){
-		if(this.boulders.size() == 0 && this.playing){
-			this.levelCompleted = true;
+		if(this.boulders.size() == 0 && this.playing && this.levelCompleted == false){
+			this.levelCompleted = false;
 			System.out.println("boulder Restart was used and changed levelCompleted true");
 			boulderMaker.start();
 		}
@@ -372,7 +460,8 @@ public class GameCourt extends JPanel {
 	 * it is marked as incomplete.
 	 */
 	public void levelIncrement(){
-		if(this.boulders.size() != 0 && this.playing && levelCompleted == true) {
+		if(this.playing && levelCompleted == true) {
+			System.out.println("this is being called");
 			this.level++;
 			this.levelCompleted = false;
 			this.stageNumber.setText("Level: " + this.level);
@@ -395,6 +484,10 @@ public class GameCourt extends JPanel {
 
 	public boolean getPlaying(){
 		return this.playing;
+	}
+
+	public boolean getNewGame(){
+		return this.newGame;
 	}
 
 //************************************************************************************//

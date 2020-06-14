@@ -20,8 +20,6 @@ public class cannon extends GameObject{
 	public void draw(Graphics g) {
 		g.setColor(Color.RED);
 		g.fillRect(this.getPx() -  SIZE /2 , this.getPy() - SIZE / 2, SIZE, SIZE);
-		g.setColor((Color.BLUE));
-		g.fillRect(this.getPx(), this.getPy(), SIZE/2, SIZE /2);
 	}
 
 
