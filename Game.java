@@ -1,15 +1,25 @@
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Game implements Runnable{ 
 	public void run() {
-		
+
+		String highScores = "";
+		File file = new File("HighScores.txt");
+		 try {
+			Scanner sc = new Scanner(file);
+			while (sc.hasNextLine()) {
+				 highScores += sc.nextLine() + "\n" ;
+			 }
+		} catch (FileNotFoundException e) {
+			 e.printStackTrace();
+		 }
+
 		// where the game is gonna be on computer screen (top left)
 		final JFrame frame = new JFrame("JAVABLAST");
 		frame.setLocation(300, 300);
@@ -48,6 +58,15 @@ public class Game implements Runnable{
 				court.reset();
 			}
 		});
+
+		final JButton HighScore = new JButton("high scores");
+		String finalHighScores = highScores;
+		HighScore.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(frame, finalHighScores);
+				court.reset();
+			}
+		});
 		
 		// needed for frame to have structure
 		frame.pack();
@@ -60,6 +79,7 @@ public class Game implements Runnable{
 		control_panel.add(score_panel);
 		control_panel.add(levelPanel);
 		control_panel.add(startover);
+		control_panel.add(HighScore);
 		
 		// starts the game
 		court.reset();

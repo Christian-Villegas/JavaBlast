@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.*;
+
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -374,8 +375,6 @@ public class GameCourt extends JPanel {
 				}
 				//bottom border
 				else if(boulders.get(i).getPy() + (boulders.get(i).getHeight() / 2) + boulders.get(i).getExtraBit() >= COURT_HEIGHT ) {
-//					System.out.println(boulders.get(i).getExtraBit());
-//					System.out.println(boulders.get(i).getPy() + (boulders.get(i).getHeight() / 2) + boulders.get(i).getExtraBit() + 10);
 					boulders.get(i).setVy(BOULDER_VY);
 					boulders.get(i).move();
 				}
